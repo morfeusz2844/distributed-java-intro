@@ -1,13 +1,19 @@
 package exercise2;
 
+import java.lang.Thread;
+import java.util.Arrays;
+
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
-        MyThread[] test = new MyThread[4];
-        for (MyThread x:test)
+        Thread[] th = new Thread[4];
+        int i=0;
+        for (Thread item: th)
         {
-            x.run();
+            item = new MyThread("Thread"+i);
+            item.start();
+            i++;
         }
         
     }
