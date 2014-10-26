@@ -12,17 +12,17 @@ public class LeftHandedPainter extends Painter {
     @Override
     public void run() {
         try {
+            String takenBrush;
+            String takenPaint;
             synchronized (paint) {
-                String takenPaint = paint.takePaint();
-                Thread.sleep(100);
-
-                synchronized (brush) {
-                    String takenBrush = this.brush.takeBrush();
-                    Thread.sleep(100);
-
-                    System.out.printf("Left hand painter painting with %s and %s\n", takenPaint, takenBrush);
-                }
+                takenPaint = paint.takePaint();
             }
+            Thread.sleep(100);
+            synchronized (brush) {
+                takenBrush = this.brush.takeBrush();
+            }
+            Thread.sleep(100);
+            System.out.printf("Left hand painter painting with %s and %s\n", takenPaint, takenBrush);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

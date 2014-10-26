@@ -5,13 +5,17 @@ public class Paints {
     private int available = 3;
 
     public synchronized void takePaint() throws InterruptedException {
-        if (available == 0) {
-            throw new IllegalStateException("There are no more paints!");
+        while (available ==0){
+            wait(150);
         }
+       // if (available == 0) {
+        //    throw new IllegalStateException("There are no more paints!");
+        //}
         available -= 1;
     }
 
     public synchronized void returnPaint() {
         available += 1;
+        notifyAll();
     }
 }
