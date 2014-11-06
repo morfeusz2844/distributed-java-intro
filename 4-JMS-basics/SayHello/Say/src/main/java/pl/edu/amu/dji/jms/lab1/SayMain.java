@@ -11,27 +11,24 @@ public class SayMain {
     public static final String EXIT = "exit";
 
     public static void main(String[] args) throws Exception {
+
         ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61616");
-
-        /*
-        Create Connection instance from ConnectionFactory
-
-        Create Session instance from connection object.
-        - Session shouldn't by transactional and should by in auto acknowledge mode (Session.AUTO_ACKNOWLEDGE).
-
-        Create Destination queue from session (check Session class and createQueue method)
-        - queue name should be "SayHelloQueue"
-
-        Create MessageProducer from session for given queue/topic
-        - set producer delivery mode to non persistent (DeliveryMode.NON_PERSISTENT);
-         */
-
+          
         Connection connection = null;
         Session session = null;
-        Destination queue = null;
-        MessageProducer producer = null;
-
-
+        //Destination queue = null;
+        Destination topic = null;
+        MessageProducer producer = null;  
+        connection = connectionFactory.createConnection();
+        
+        session = connection.createSession(false,Session.AUTO_ACKNOWLEDGE);
+        //queue = session.createQueue("SayHelloQueue");
+        topic = session.createTopic("SayHelloTopic");
+        
+        //producer = session.createProducer(queue);
+        producer = session.createProducer(topic);
+        producer.setDeliveryMode(DeliveryMode.NON_PERSISTENT);
+        
         connection.start();
 
         BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(System.in));
@@ -40,9 +37,9 @@ public class SayMain {
         while (!text.equalsIgnoreCase(EXIT)) {
             System.out.print("Say hello to:");
             text = bufferedReader.readLine();
-
-            //Create TextMessage from session with text variable
-            //Send this message to queue (use producer for that)
+            TextMessage message = session.createTextMessage(text);
+            producer.send(message);
+            
         }
 
         //Close stuff
