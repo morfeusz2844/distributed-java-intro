@@ -4,15 +4,16 @@ import org.springframework.jms.core.JmsTemplate;
 import org.springframework.jms.core.MessageCreator;
 
 import javax.jms.*;
+import org.springframework.jms.connection.JmsTransactionManager;
 
 public class OfferService {
 
     private JmsTemplate jmsTemplate;
-
+    
     private Destination offerTopic;
 
     private Destination orderQueue;
-
+    
     public void setJmsTemplate(JmsTemplate jmsTemplate) {
         this.jmsTemplate = jmsTemplate;
     }
@@ -23,6 +24,10 @@ public class OfferService {
 
     public void setOrderQueue(Destination orderQueue) {
         this.orderQueue = orderQueue;
+    }
+    
+    public void Offer(final Double price){
+        
     }
 
     public void sendOffer(final Double price){
