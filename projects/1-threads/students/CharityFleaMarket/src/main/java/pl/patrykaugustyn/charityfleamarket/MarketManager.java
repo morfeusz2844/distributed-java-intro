@@ -10,7 +10,7 @@ public class MarketManager implements Runnable {
     private final String threadName = "MarketManager";
     private volatile static boolean isMarketOpen;
 
-    private final static int numberDonors = 15;
+    private final static int numberDonors = 5;
     private final static int numberRecipients = 15;
 
     private List<Donor> donorsList;
@@ -46,7 +46,7 @@ public class MarketManager implements Runnable {
     }
 
     private void registerRecipents() {
-        for (int i = 0; i < numberDonors; i++) {
+        for (int i = 0; i < numberRecipients; i++) {
             recipentsList.add(new Recipent("Recipent-" + i));
             recipientsExecutor.execute(recipentsList.get(i));
         }
@@ -56,20 +56,16 @@ public class MarketManager implements Runnable {
     public void run() {
         System.out.println("Running " + threadName);
 
+        
+        setIsMarketOpen(true);
         this.registerDonors();
         this.registerRecipents();
-        setIsMarketOpen(true);
         Chairman chairman = new Chairman();
         chairmanExecutor.execute(chairman);
-        while (getIsMarketOpen()) {
-        }
+
         chairmanExecutor.shutdown();
-        while(!chairmanExecutor.isTerminated()){}
         donorsExecutor.shutdown();
-        while (!donorsExecutor.isTerminated()){}
         recipientsExecutor.shutdown();
-        while (!recipientsExecutor.isTerminated()){}
-        System.out.println("Stoped " + threadName);
 
     }
 

@@ -9,7 +9,7 @@ public class CharityFleaMarket {
         MarketManager marketManager = new MarketManager();
         marketExecutor.execute(marketManager);
         marketExecutor.shutdown();
-        while (!marketExecutor.isTerminated()){}
-        System.out.println("Market closed");
+//        while (!marketExecutor.isTerminated()){}
+//        System.out.println("Market closed");
     }
 }

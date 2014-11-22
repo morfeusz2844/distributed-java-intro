@@ -1,5 +1,9 @@
 package pl.patrykaugustyn.charityfleamarket;
 
+import static java.lang.Thread.sleep;
+import java.util.LinkedList;
+import java.util.Queue;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -7,48 +11,57 @@ public class Donor implements Runnable {
 
     private String name;
     private boolean isItemRegistered;
-    private Item item;
-    private long timeInterval; //czas po którym da się rejestrować item
+    
+    private Queue<Item> listItems;
 
     public Donor(String name, long timeInterval) {
         super();
         System.out.println("Creating " + name);
         this.name = name;
         this.isItemRegistered = false;
-        this.item = new Item("item-" + name);
-        this.timeInterval = timeInterval;
+                this.listItems = new LinkedList<>();
+        this.createItemQueue();
     }
-
-    public synchronized boolean registerItem() {
-        if (Chairman.getCountAuction() < 10) {
-            Chairman.addItemToAuctionQueue(this.item);
-            this.isItemRegistered = true;
-            return true;
-        } else {
-            return false;
+    private void createItemQueue() {
+        Random randomGenerator = new Random();
+        int numberItem = randomGenerator.nextInt(100);
+        for (int i = 0; i < numberItem; i++) {
+            this.listItems.add(new Item(name + "-item-" + i));
+        }
+        System.out.println(name + " generate items " + numberItem);
+    }
+    private synchronized void registerItem() {
+        if (this.listItems.size() != 0) {
+            if (Chairman.getCountAuction() > 9) {
+                try {
+                    sleep(5000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(Donor.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            if (Chairman.getCountAuction() < 10) {
+                if (this.listItems.size() > 0) {
+                    Item item = this.listItems.element();
+                    Chairman.addItemToAuctionQueue(item);
+                    this.listItems.remove(item);
+                }
+            }
         }
     }
 
     @Override
     public void run() {
-        System.out.println("Starting " + name);
-        try {
-            Thread.sleep(this.timeInterval);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Donor.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        System.out.println("Register " + name);
         while (MarketManager.getIsMarketOpen()) {
-            while (!(this.isItemRegistered)) {
-                try {
-                    if (!(registerItem())) {
-                        Thread.sleep(5000);
-                    }
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(Donor.class.getName()).log(Level.SEVERE, null, ex);
-                }
+            long time = util.RandomLong(1000, 30000);
+            try {
+                sleep(time);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Donor.class.getName()).log(Level.SEVERE, null, ex);
             }
+            //Register item to Queue
+            this.registerItem();
         }
-
-        System.out.println(name + " says good bye");
+        System.out.println("Close " + name);
     }
 }

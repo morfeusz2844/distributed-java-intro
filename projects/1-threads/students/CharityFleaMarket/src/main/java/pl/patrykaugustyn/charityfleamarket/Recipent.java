@@ -56,10 +56,9 @@ public class Recipent implements Runnable {
     public void run() {
         System.out.println("Starting " + name);
         try {
-            Thread.sleep(5000);
-            while (Chairman.getAuctionAvailable()) {
-
+            while (MarketManager.getIsMarketOpen()) {
                 if (!(this.isRegistered) && (Chairman.getAuctionAvailable())) {
+                    Thread.sleep(5000);
                     if (this.won == true) {
                         this.won = false;
                         Thread.sleep(util.RandomLong(5000, 15000));
@@ -67,6 +66,8 @@ public class Recipent implements Runnable {
                     if (registerToAuction()) {
                         System.out.println("Registering " + name + ".");
                     }
+                } else {
+                    Thread.sleep(2000);
                 }
             }
         } catch (InterruptedException ex) {
