@@ -5,6 +5,7 @@ import org.hibernate.validator.constraints.NotBlank;
 
 import javax.persistence.*;
 import java.util.List;
+import pl.edu.amu.dji.jms.lab11.books.Review;
 
 @Entity
 public class Book {
@@ -33,6 +34,9 @@ public class Book {
     @JsonView(MinimalView.class)
     private List<String> authors;
 
+    @Transient
+    private Iterable<Review> reviews;
+    
     public Book() {
     }
 
@@ -74,4 +78,14 @@ public class Book {
     public void setAuthors(List<String> authors) {
         this.authors = authors;
     }
+
+    public void setReviews(Iterable<Review> reviews) {
+        this.reviews = reviews;
+    }
+
+    public Iterable<Review> getReviews() {
+        return reviews;
+    }
+    
+    
 }
